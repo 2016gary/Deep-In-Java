@@ -219,6 +219,6 @@
 ### -XX:+UseG1GC
 
 ---
-# G1垃圾收集器入门
+# G1垃圾回收器入门
 ### <a href="http://www.oracle.com/webfolder/technetwork/tutorials/obe/java/G1GettingStarted/index.html">翻译自Oraclle官方文档</a>
 ### By Gary
