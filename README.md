@@ -485,3 +485,124 @@
 
 ---
 # 6.用G1记录GC
+### 我们需要解决的最后一个主题是使用日志信息来分析G1回收器的性能。本节简要介绍可用于收集数据的开关以及日志中打印的信息。
+
+## 设置日志详细信息
+### 您可以将细节设置为三个不同级别的细节。
+### （1）-verbosegc（相当于-XX:+PrintGC）设置日志的细节级别。
+### 示例：
+    [GC pause (G1 Humongous Allocation) (young) (initial-mark) 24M- >21M(64M), 0.2349730 secs]
+	[GC pause (G1 Evacuation Pause) (mixed) 66M->21M(236M), 0.1625268 secs]   
+### （2）-XX:+PrintGCDetails将详细级别设置为更精细。选项显示以下信息：
+- 每个阶段显示平均，最小和最大时间。
+- 根扫描，RSet更新（已处理缓冲区信息），RSet扫描，对象复制，终止（尝试次数）。
+- 还显示“其他”时间，例如花费在选择CSet，参考处理，引用排队和释放CSet的时间。
+- 显示Eden，幸存区和总堆占用。
+### 示例：
+	[Ext Root Scanning (ms): Avg: 1.7 Min: 0.0 Max: 3.7 Diff: 3.7]
+	[Eden: 818M(818M)->0B(714M) Survivors: 0B->104M Heap: 836M(4096M)->409M(4096M)]
+### （3）-XX:+UnlockExperimentalVMOptions -XX:G1LogLevel=最好将细节级别设置为最佳。喜欢更细，但包括个人工作者的线程信息。
+### 示例：
+	[Ext Root Scanning (ms): 2.1 2.4 2.0 0.0
+           Avg: 1.6 Min: 0.0 Max: 2.4 Diff: 2.3]
+       [Update RS (ms):  0.4  0.2  0.4  0.0
+           Avg: 0.2 Min: 0.0 Max: 0.4 Diff: 0.4]
+           [Processed Buffers : 5 1 10 0
+           Sum: 16, Avg: 4, Min: 0, Max: 10, Diff: 10]
+
+## 确定时间
+### 几个开关决定了GC日志中显示的时间。
+### （1）-XX:+PrintGCTimeStamps - 显示自JVM启动以来的经过时间。
+### 示例：
+	 1.729: [GC pause (young) 46M->35M(1332M), 0.0310029 secs]
+### （2）-XX:+PrintGCDateStamps - 为每个条目添加时间前缀。
+### 示例：
+	2012-05-02T11:16:32.057+0200: [GC pause (young) 46M->35M(1332M), 0.0317225 secs]
+
+## 了解G1日志
+### 要了解日志，本节使用实际GC日志输出定义了一些术语。以下示例显示了日志中的输出，以及您将在其中找到的术语和值的解释。
+## G1日志术语索引
+### 1.Parallel Time并行时间
+### 示例：
+	414.557: [GC pause (young), 0.03039600 secs] [Parallel Time: 22.9 ms]
+	[GC Worker Start (ms): 7096.0 7096.0 7096.1 7096.1 706.1 7096.1 7096.1 7096.1 7096.2 7096.2 7096.2 7096.2
+       Avg: 7096.1, Min: 7096.0, Max: 7096.2, Diff: 0.2]
+### Parallel Time – 暂停的主要并行部分的总经过时间
+### Worker Start – worker开始的时间戳
+### 注意：日志在线程ID上排序，并且在每个条目上是一致的
+
+### 2.External Root Scanning扫描外部根部
+### 示例：
+	[Ext Root Scanning (ms): 3.1 3.4 3.4 3.0 4.2 2.0 3.6 3.2 3.4 7.7 3.7 4.4
+     Avg: 3.8, Min: 2.0, Max: 7.7, Diff: 5.7]
+### External root scanning - 扫描外部根部所花费的时间（例如，指向堆的系统字典）
+
+### 3.Update Remembered Set更新记忆集
+### 示例：
+	[Update RS (ms): 0.1 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 Avg: 0.0, Min: 0.0, Max: 0.1, Diff: 0.1]
+   	[Processed Buffers : 26 0 0 0 0 0 0 0 0 0 0 0
+    Sum: 26, Avg: 2, Min: 0, Max: 26, Diff: 26]
+### Update Remembered Set - 必须更新在开始暂停之前完成但尚未被并发优化线程处理的任何缓冲区。时间取决于卡的密度。卡越多，需要的时间越长。
+
+### 4.Scanning Remembered Sets扫描记忆集
+### 示例：
+	[Scan RS (ms): 0.4 0.2 0.1 0.3 0.0 0.0 0.1 0.2 0.0 0.1 0.0 0.0 Avg: 0.1, Min: 0.0, Max: 0.4, Diff: 0.3]F
+### Scanning Remembered Sets - 查找指向回收集的指针。
+
+### 5.Object Copy对象复制
+### 示例：
+	[Object Copy (ms): 16.7 16.7 16.7 16.9 16.0 18.1 16.5 16.8 16.7 12.3 16.4 15.7 Avg: 16.3, Min: 12.3, Max:  18.1, Diff: 5.8]
+### Object copy – 每个线程用于复制和疏散对象的时间。
+
+### 6.Termination Time终止时间
+### 示例：
+	[Termination (ms): 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+	0.0 Avg: 0.0, Min: 0.0, Max: 0.0, Diff: 0.0] [Termination Attempts : 1 1 1 1 1 1 1 1 1 1 1 1 Sum: 12, Avg: 1, Min: 1, Max: 1, Diff: 0]
+### Termination time - 当工作线程完成其特定的一组对象进行复制和扫描时，它将进入终止协议。它寻找工作窃取，一旦完成了这项工作，它再次进入终止协议。终止企图计算所有企图窃取工作
+
+### 7.GC Worker End GC工作结束
+### 示例：
+	[GC Worker End (ms): 7116.4 7116.3 7116.4 7116.3 7116.4 7116.3 7116.4 7116.4 7116.4 7116.4 7116.3 7116.3
+    Avg: 7116.4, Min: 7116.3, Max: 7116.4, Diff:   0.1]
+	[GC Worker (ms): 20.4 20.3 20.3 20.2 20.3 20.2 20.2 20.2 20.3 20.2 20.1 20.1
+     Avg: 20.2, Min: 20.1, Max: 20.4, Diff: 0.3]
+### GC worker end time – 单个GC工作停止时的时间戳。
+### GC worker time – 单个GC工作线程花费的时间。
+
+### 8.GC Worker Other GC其他工作
+### 示例：
+	[GC Worker Other (ms): 2.6 2.6 2.7 2.7 2.7 2.7 2.7 2.8 2.8 2.8 2.8 2.8
+    Avg: 2.7, Min: 2.6, Max: 2.8, Diff: 0.2]
+### GC worker other – 不能归因于前面列出的工作阶段的时间（对于每个GC线程）。应该相当低。在过去，我们已经看到了过高的价值，它们被归因于JVM其他部分的瓶颈（例如，代码缓存占用的增加）。
+
+### 9.Clear CT
+### 示例：
+	[Clear CT: 0.6 ms]
+### 用于清除RSet扫描元数据的卡表的时间
+
+### 10.Other
+### 示例：
+	[Other: 6.8 ms]
+### GC暂停的各种其他顺序阶段所花费的时间。
+
+### 11.CSet
+### 示例：
+	[Choose CSet: 0.1 ms]
+### 最后确定要收集的区域集合的时间。通常非常小；稍长时必须选择old。
+
+### 12.Ref Proc
+### 示例：
+	[Ref Proc: 4.4 ms]
+### 从GC的前几个阶段延迟处理软、弱等引用的时间。
+
+### 13.Ref Enq
+### 示例：
+	[Ref Enq: 0.1 ms]
+### 在待定列表中放置软、弱等引用的时间。
+
+### 14.Free CSet
+### 示例：
+	[Free CSet: 2.0 ms]
+### 时间花费了刚刚回收的一些区域，包括他们的记忆集。
+
+### （未完待续）
