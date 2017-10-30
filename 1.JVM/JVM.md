@@ -22,12 +22,10 @@
 ### 以下是硬件和软件要求的列表：
 - 运行于Windows XP或更高版本，Mac OS X或Linux的PC。请注意，手上已经完成了Windows 7，并没有在所有平台上进行测试。但是，应该在OS X或Linux上正常工作。而且，具有多于一个核的机器也是优选的。
 - Java 7 Update 7或更高版本
-- 最新的Java 7 demo和样例Zip文件
 
 ## 先决条件
 ### 在开始本教程之前，您应该：
 - 如果还没有这样做，请下载并安装最新版本的Java JDK（JDK 7 u7或更高版本）。
-- 从同一位置下载并安装Demos和Samples zip文件。 解压文件并将内容放在目录中。 例如：C：\ javademos
 
 ---
 # 2.Java技术和JVM
