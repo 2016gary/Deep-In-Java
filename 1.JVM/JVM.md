@@ -58,14 +58,14 @@
 ### Hotspot结构
 ### HotSpot JVM具有支持强大的功能和功能基础的架构，并支持实现高性能和大规模可扩展性的能力。例如，HotSpot JVM JIT编译器生成动态优化。换句话说，它们在Java应用程序运行时进行优化决策，并生成针对底层系统架构的高性能本地机器指令。此外，通过其运行时环境和多线程垃圾回收器的成熟演进和持续工程，即使是最大的可用计算机系统，HotSpot JVM也可提供高可扩展性。
 
-<img src="/Images/hotspot_architecture.png"  alt="图片无法显示" />
+<img src="./Images/hotspot_architecture.png"  alt="图片无法显示" />
 
 ### JVM的主要组件包括类加载器，运行时数据区和执行引擎。
 
 ### Hotspot主要组件
 ### 与性能相关的JVM的关键组件在下图中突出显示。
 
-<img src="/Images/hotspot_key_component.png"  alt="图片无法显示" />
+<img src="./Images/hotspot_key_component.png"  alt="图片无法显示" />
 
 ### 当调整性能时，JVM有三个组件。堆是存储对象数据的地方。然后，该区域由启动时选择的垃圾回收器进行管理。大多数调优选项涉及到调整堆的大小，并为您的情况选择最合适的垃圾回收器。JIT编译器也对性能有很大的影响，但很少需要使用较新版本的JVM进行调优。
 
@@ -93,34 +93,34 @@
 ## 步骤1：标记
 ### 该过程的第一步称为标记。这是垃圾回收器识别哪些内存块正在使用的地方，哪些不在。
 
-<img src="/Images/marking.png"  alt="图片无法显示" />
+<img src="./Images/marking.png"  alt="图片无法显示" />
 
 ### 引用的对象以蓝色显示。未引用的对象以金色显示。所有对象在标记阶段进行扫描，以进行此确定。如果必须扫描系统中的所有对象，这可能是非常耗时的过程。
 
 ## 步骤2：正常删除
 ### 正常删除未引用的对象，将引用的对象和指针留给可用空间。
 
-<img src="/Images/normal_deletion.png"  alt="图片无法显示" />
+<img src="./Images/normal_deletion.png"  alt="图片无法显示" />
 
 ### 内存分配器保存对可以分配新对象的可用空间块的引用。
 
 ## 步骤2a：通过压缩删除
 ### 为了进一步提高性能，除了删除未引用的对象之外，还可以压缩剩余的引用对象。通过将引用的对象一起移动，这使得新的内存分配更容易和更快。
 
-<img src="/Images/deletion_compacting.png"  alt="图片无法显示" />
+<img src="./Images/deletion_compacting.png"  alt="图片无法显示" />
 
 ## 为什么要分代垃圾回收？
 ### 如前所述，标记和压缩JVM中的所有对象是低效的。随着越来越多的对象被分配，对象列表增长并且增长导致更长和更长的垃圾回收时间。然而，应用程序的实证分析表明，大多数对象生命周期都是短暂的。
 ### 以下是这些数据的示例。Y轴显示分配的字节数，X访问显示随时间改变分配的字节数。
 
-<img src="/Images/ObjectLifetime.gif"  alt="图片无法显示" />
+<img src="./Images/ObjectLifetime.gif"  alt="图片无法显示" />
 
 ### 如您所见，随着时间的推移，对象数量越来越少。事实上，大多数对象的寿命非常短，如图左侧的较高值所示。
 
 ## JVM代
 ### 从对象分配行为学到的信息可以用来增强JVM的性能。 因此，堆被分解成较小的部分或几代。堆分为：年轻代，老年代，永久代
 
-<img src="/Images/hotspot_heap_structure.png"  alt="图片无法显示" />
+<img src="./Images/hotspot_heap_structure.png"  alt="图片无法显示" />
 
 ### 年轻代是所有新对象被分配和老化的地方。当年轻代填满时，这会导致少量的垃圾回收。小样本可以优化，假设对象死亡率高。一个充满死亡对象的年轻代很快就被回收起来了。一些幸存的对象被老化，最终转移到老年代。
 ### Stop the World Event-所有小垃圾回收都是“Stop the World”事件。这意味着所有应用程序线程都将停止，直到操作完成。
@@ -134,35 +134,35 @@
 ### 现在你明白了为什么堆被分成不同的代，现在是时候看这些空间是如何相互作用的。随后的图片将遍历JVM中的对象分配和老化过程。
 ### 1.首先，将任何新对象分配给eden空间。 两个幸存空间开始空。
 
-<img src="/Images/object_allocation.png"  alt="图片无法显示" />
+<img src="./Images/object_allocation.png"  alt="图片无法显示" />
 
 ### 2.当eden空间填满时，会触发小的垃圾回收。
 
-<img src="/Images/filling_eden_space.png"  alt="图片无法显示" />
+<img src="./Images/filling_eden_space.png"  alt="图片无法显示" />
 
 ### 3.被引用的对象被移动到第一幸存空间。当eden空间被清除时，未引用的对象被删除。
 
-<img src="/Images/copying_referenced_object.png"  alt="图片无法显示" />
+<img src="./Images/copying_referenced_object.png"  alt="图片无法显示" />
 
 ### 4.在下一个小的GC中，同样的事情发生在eden空间。未引用的对象被删除，引用对象被移动到幸存空间。然而，在这种情况下，它们被移动到第二幸存空间（S1）。另外，来自第一幸存空间（S0）的最后一个小的GC的对象的年龄增加并被移动到S1。一旦所有幸存的对象都移动到S1，S0和eden都被清除。请注意，我们现在在幸存空间中具有不同的老化对象。
 
-<img src="/Images/object_aging.png"  alt="图片无法显示" />
+<img src="./Images/object_aging.png"  alt="图片无法显示" />
 
 ### 5.在下一个小的GC中，重复相同的过程。但这次幸存空间转换。被引用的对象被移动到S0。幸存的对象是老化的。Eden和S1被清除。
 
-<img src="/Images/additional_aging.png"  alt="图片无法显示" />
+<img src="./Images/additional_aging.png"  alt="图片无法显示" />
 
 ### 6.经过小的GC，当老年对象达到一定的年龄阈值（在这个例子中8），他们从年轻代变为老年代。
 
-<img src="/Images/promotion.png"  alt="图片无法显示" />
+<img src="./Images/promotion.png"  alt="图片无法显示" />
 
 ### 7.年轻代继续给新的对象分配内存将继续推动对象往老年代空间的变迁。
 
-<img src="/Images/promotion2.png"  alt="图片无法显示" />
+<img src="./Images/promotion2.png"  alt="图片无法显示" />
 
 ### 8.所以这几乎涵盖了与年轻代的整个过程。最终，一个主要的GC将在老年代进行，清理和压缩这个空间。
 
-<img src="/Images/gc_summary.png"  alt="图片无法显示" />
+<img src="./Images/gc_summary.png"  alt="图片无法显示" />
 
 ---
 # 5.Java垃圾回收器
@@ -253,11 +253,11 @@
 ## G1操作概述
 ### 老的垃圾回收器（串行，并行，CMS）都将堆结构分为三个部分：年轻代，老年代和固定内存大小的永久代。
 
-<img src="/Images/HeapStructure.png"  alt="图片无法显示" />
+<img src="./Images/HeapStructure.png"  alt="图片无法显示" />
 
 ### 所有内存对象最后都在这三个部分之一中。G1回收器采取不同的方法。
 
-<img src="/Images/g1_heap.png"  alt="图片无法显示" />
+<img src="./Images/g1_heap.png"  alt="图片无法显示" />
 
 ### 堆被分成一组相等大小的堆区，每个区都是连续的虚拟内存范围。某些区域集与老的回收器分配的角色相同（eden，幸存区，老年代），但是它们的大小不一样。这提供了更大的内存使用灵活性。
 ### 执行垃圾回收时，G1以类似于CMS回收器的方式运行。G1执行并发的全局标记阶段来确定整个堆中对象的活动性。标记阶段完成后，G1知道哪些区域大部分是空的。它首先在这些地区回收，这通常产生大量的可用空间。这就是为什么垃圾回收方法叫做G1。顾名思义，G1将其回收和压缩活动区中在可能充满可回收对象的堆的区域，也就是垃圾。G1使用暂停预测模型来满足用户定义的暂停时间目标，并根据指定的暂停时间目标选择要回收的区域数量。
@@ -294,47 +294,47 @@
 ### 1.CMS回收器堆结构
 ### 堆被分成三个空间。
 
-<img src="/Images/cms_structure.png"  alt="图片无法显示" />
+<img src="./Images/cms_structure.png"  alt="图片无法显示" />
 
 ### 年轻代分裂成Eden和两个幸存空间。老年代是一个连续的空间。对象集合完成。除非有full GC，否则不进行压缩。
 
 ### 2.年轻代GC如何在CMS中工作
 ### 年轻代是浅绿色，老年代是蓝色的。如果您的应用程序运行了一段时间，这可能是CMS的表现。对象分散在老年代。
 
-<img src="/Images/young_gc.png"  alt="图片无法显示" />
+<img src="./Images/young_gc.png"  alt="图片无法显示" />
 
 ### 使用CMS，老年代对象被释放到位。他们没有移动。空间不紧凑，除非有完整的GC。
 
 ### 3.年轻代回收
 ### 活动对象从Eden和幸存空间复制到另一个幸存空间。任何已达到老化阈值的老对象都会升为老年代。
 
-<img src="/Images/young_collection.png"  alt="图片无法显示" />
+<img src="./Images/young_collection.png"  alt="图片无法显示" />
 
 ### 4.年轻代GC后
 ### 在年轻代GC之后，Eden空间被清除，其中一个幸存空间被清除。
 
-<img src="/Images/after_gc.png"  alt="图片无法显示" />
+<img src="./Images/after_gc.png"  alt="图片无法显示" />
 
 ### 新提升的对象在图中以深蓝色显示。绿色的对象是幸存下来的一代尚未晋升为老年代的年轻代对象。
 
 ### 5.CMS老年代回收
 ### 两次停止世界事件发生：初始标记和备注。当老年代达到一定的入住率时，CMS被启动。
 
-<img src="/Images/old_collection.png"  alt="图片无法显示" />
+<img src="./Images/old_collection.png"  alt="图片无法显示" />
 
 ### （1）初始标记是一个短暂的暂停阶段，其中存在（可达到的）对象被标记。（2）并发标记在应用程序继续执行时查找活动对象。最后，在（3）备注阶段，发现在上一阶段（2）并发标记期间遗漏的对象。
 
 ### 6.老年代回收 - 并列扫描
 ### 在前一阶段没有标记的对象被释放到位。没有压缩。
 
-<img src="/Images/concurrent_sweep.png"  alt="图片无法显示" />
+<img src="./Images/concurrent_sweep.png"  alt="图片无法显示" />
 
 ### 注意：未标记的对象==死对象
 
 ### 7.老年代回收 - 清扫后
 ### 在（4）扫描阶段之后，你可以看到很多内存被释放。您还会注意到没有压缩已经完成。
 
-<img src="/Images/after_sweeping.png"  alt="图片无法显示" />
+<img src="./Images/after_sweeping.png"  alt="图片无法显示" />
 
 ### 最后，CMS回收器将通过（5）复位阶段，等待下一次达到GC阈值。
 
@@ -345,14 +345,14 @@
 ### 1.G1堆结构
 ### 堆是一个分为许多固定大小区域的内存区域。
 
-<img src="/Images/g1_structure.png"  alt="图片无法显示" />
+<img src="./Images/g1_structure.png"  alt="图片无法显示" />
 
 ### 区域大小由JVM在启动时选择。JVM通常针对2000个区域，大小从1到32Mb不等。
 
 ### 2.G1堆分配
 ### 实际上，这些区域被映射为Eden，幸存区和老年代空间的逻辑表示。
 
-<img src="/Images/g1_allocation.png"  alt="图片无法显示" />
+<img src="./Images/g1_allocation.png"  alt="图片无法显示" />
 
 ### 图片中的颜色显示哪个区域与哪个角色相关联。活动对象从一个区域撤出（即复制或移动）到另一个区域。区域被设计为与或不停止所有其他应用程序线程并行回收。
 ### 如图所示，这些区域可以分配到Eden，幸存区和老年代区域。另外还有第四类被称为Humongous区域的对象。 这些区域被设计为保持标准区域或更大尺寸的50％的对象。它们被存储为一组连续的区域。最后，最后一种类型的区域将是堆的未使用区域。
@@ -361,14 +361,14 @@
 ### 3.G1中的年轻代
 ### 堆被分为大约2000个区域。最小尺寸为1Mb，最大尺寸为32Mb。蓝色区域拥有老年代的对象，绿色区域拥有年轻代的对象。
 
-<img src="/Images/young_g1.png"  alt="图片无法显示" />
+<img src="./Images/young_g1.png"  alt="图片无法显示" />
 
 ### 请注意，这些区域不像老的垃圾回收器那样连续。
 
 ### 4.G1中年轻代的GC
 ### 活动对象被撤离（即复制或移动）到一个或多个幸存区域。如果满足老化阈值，某些对象将被升级到老年代区域。
 
-<img src="/Images/young_gc_g1.png"  alt="图片无法显示" />
+<img src="./Images/young_gc_g1.png"  alt="图片无法显示" />
 
 ### 这是一个停止世界（STW）的暂停。对于下一个年轻代的GC计算Eden大小和幸存区大小。保存Accounting信息以帮助计算大小。像暂停时间目标这样的事情被考虑在内。
 ### 这种方法使得非常容易调整区域大小，使其根据需要变得更大或更小。
@@ -376,7 +376,7 @@
 ### 5.G1年轻代GC的结束
 ### 活动对象已被撤离到幸存区或老年代。
 
-<img src="/Images/end_young_gc.png"  alt="图片无法显示" />
+<img src="./Images/end_young_gc.png"  alt="图片无法显示" />
 
 ### 最近升级的对象以深蓝色显示。幸存区用绿色。
 ### 总之，关于G1的年轻代可以说如下：
@@ -403,27 +403,27 @@
 ### 6.初始标记阶段
 ### 活动对象的初始标记搭载在年轻代的垃圾回收中。在日志中，这被称为GC暂停（年轻代）（初始标记）。
 
-<img src="/Images/g1_phase.png"  alt="图片无法显示" />
+<img src="./Images/g1_phase.png"  alt="图片无法显示" />
 
 ### 7.并行标记阶段
 ### 如果找到空区域（如“X”所示），则在备注阶段立即删除它们。此外，计算出确定活跃度的“accounting”信息。
 
-<img src="/Images/g1_marking_phase.png"  alt="图片无法显示" />
+<img src="./Images/g1_marking_phase.png"  alt="图片无法显示" />
 
 ### 8.备注阶段
 ### 空区域被删除和回收。现在，对所有区域计算区域活跃度。
 
-<img src="/Images/g1_remark.png"  alt="图片无法显示" />
+<img src="./Images/g1_remark.png"  alt="图片无法显示" />
 
 ### 9.复制/清理阶段
 ### G1选择“活跃度”最低的区域，可以最快回收的区域。那么这些区域就是和年轻代的GC同时回收。这在日志中被表示为[GC pause（mixed）]。 所以同时回收年轻代和老年代。
 
-<img src="/Images/g1_clean_phase.png"  alt="图片无法显示" />
+<img src="./Images/g1_clean_phase.png"  alt="图片无法显示" />
 
 ### 10.复制/清理阶段后
 ### 所选择的区域已被回收并压缩成如图所示的深蓝色区域和深绿色区域。
 
-<img src="/Images/g1_after_clean_phase.png"  alt="图片无法显示" />
+<img src="./Images/g1_after_clean_phase.png"  alt="图片无法显示" />
 
 ### 老年代GC概要
 ### 总而言之，我们可以提到关于老年代的G1垃圾回收的几个要点。
