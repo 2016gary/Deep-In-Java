@@ -22,6 +22,8 @@
 # 4.Collection接口
 ### Collection层次结构中的根接口。一些collection允许有重复的元素，而另一些则不允许。一些collection是有序的，而另一些则是无序的。
 
+![](https://i.imgur.com/O5D0xph.png)
+
 ## 4.1 Iterator接口
 - 对collection进行迭代的迭代器
 - 依赖于集合而存在
@@ -68,6 +70,9 @@
 - 将键映射到值的对象
 - 一个映射不能包含重复的键
 - 每个键最多只能映射到一个值
+
+![](https://i.imgur.com/vwShzYg.png)
+
 ### Map接口和Collection接口的不同
 - Map是双列的,Collection是单列的
 - Map的键唯一,Collection的子体系Set是唯一的
