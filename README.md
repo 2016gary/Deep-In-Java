@@ -1,6 +1,6 @@
 # Deep In Java
 
-<img src="https://i.imgur.com/x653nRK.png" width="10%" alt="无法显示该图片" />
+<img src="https://i.imgur.com/x653nRK.png" width="20%" alt="无法显示该图片" />
 
 ### By Gary
 ### <a href="https://github.com/2016gary/Deep-In-Java/blob/master/1.JVM/JVM%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B.md">1.JVM入门教程</a>
