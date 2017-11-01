@@ -13,18 +13,18 @@
 - Java代码会被解释：Java字节码需要被java程序解释执行，此时，Java字节码被翻译成CPU相关的二进制代码。
 - JIT编译器的作用：在程序运行期间，将Java字节码编译成平台相关的二进制代码。正因为此编译行为发生在程序运行期间，所以该编译器被称为Just-In-Time编译器。
 
-<img src="./Images/java_process1.png" alt="无法显示该图片"/>
+<img src="./Images/java_process1.png" width="80%" alt="无法显示该图片"/>
 
-<img src="./Images/java_process2.png" width="80%" alt="无法显示该图片"/>
+<img src="./Images/java_process2.png" width="70%" alt="无法显示该图片"/>
 
 ## 1.4 Java代码编译和执行的整个过程
 ### Java代码编译是由Java源码编译器来完成：
 
-<img src="./Images/java_c.gif" width="80%" alt="无法显示该图片"/>
+<img src="./Images/java_c.gif" width="70%" alt="无法显示该图片"/>
 
 ### Java字节码的执行是由JVM执行引擎来完成：
 
-<img src="./Images/java_e.gif" width="80%" alt="无法显示该图片"/>
+<img src="./Images/java_e.gif" width="70%" alt="无法显示该图片"/>
 
 # 2.class字节码文件
 ### 计算机只能识别0和1，所以编写的程序都需要经过编译器，转换为由0和1组成的二进制本地机器码(Native Code)，.class文件也是0，1二进制程序。
