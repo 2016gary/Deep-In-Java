@@ -13,9 +13,9 @@
 - Java代码会被解释：Java字节码需要被java程序解释执行，此时，Java字节码被翻译成CPU相关的二进制代码。
 - JIT编译器的作用：在程序运行期间，将Java字节码编译成平台相关的二进制代码。正因为此编译行为发生在程序运行期间，所以该编译器被称为Just-In-Time编译器。
 
-<img src="./Images/java_process1.png" width="80%" alt="无法显示该图片"/>
+<img src="./Images/java_process1.png" width="70%" alt="无法显示该图片"/>
 
-<img src="./Images/java_process2.png" width="70%" alt="无法显示该图片"/>
+<img src="./Images/java_process2.png" width="60%" alt="无法显示该图片"/>
 
 ## 1.4 Java代码编译和执行的整个过程
 ### Java代码编译是由Java源码编译器来完成：
@@ -72,7 +72,7 @@
 ## 4.2 内存溢出
 ### 系统在为某段执行指令（程序）分配内存的时候，发现内存不足，抛出错误，这叫做内存溢出。内存溢出是一种结果描述。通常都是由于内存泄露从而引发内存溢出。
 
-<img src="./Images/OOM2.png" alt="无法显示该图片"/>
+<img src="./Images/OOM2.png" width="80%" alt="无法显示该图片"/>
 
 
 
