@@ -5,7 +5,8 @@
 
 <img src="./Images/MySQL.png" alt="无法显示该图片"/>
 
-## 1.1 Connectors
+## 1.1 连接层
+## 1.1.1 Connectors
 ### MySQL首先是一个网络程序，其在TCP之上定义了自己的应用层协议。所以要使用MySQL，我们可以编写代码，跟MySQL Server建立TCP连接，之后按照其定义好的协议进行交互。当然这样比较麻烦，比较方便的办法是调用SDK，比如Native C API、JDBC、PHP等各语言MySQL Connector，或者通过ODBC。但通过SDK来访问MySQL，本质上还是在TCP连接上通过MySQL协议跟MySQL进行交互。
 
 ## 1.2 应用层
@@ -26,11 +27,36 @@
 ### MySQL内部维持着一些Cache和Buffer，比如Query Cache用来缓存一条Select语句的执行结果，如果能够在其中找到对应的查询结果，那么就不必再进行查询解析、优化和执行的整个过程了。
 
 ## 1.4 物理层
-## 1.4.1 Pluggable Storage Engine
+## 1.4.1 Pluggable Storage Engine可插拔存储引擎
 ### 存储引擎的具体实现，这些存储引擎都实现了MySQl定义好的存储引擎API的部分或者全部。MySQL可以动态安装或移除存储引擎，可以有多种存储引擎同时存在，可以为每个Table设置不同的存储引擎。存储引擎负责在文件系统之上，管理表的数据、索引的实际内容，同时也会管理运行时的Cache、Buffer、事务、Log等数据和功能。
 
 ## 1.4.2 File System
 ### 所有的数据，数据库、表的定义，表的每一行的内容，索引，都是存在文件系统上，以文件的方式存在的。当然有些存储引擎比如InnoDB，也支持不使用文件系统直接管理裸设备，但现代文件系统的实现使得这样做没有必要了。在文件系统之下，可以使用本地磁盘，可以使用DAS、NAS、SAN等各种存储系统。
 
+# 2.MySQL内部组件结构
+
+<img src="./Images/MySQL_module.jpg" alt="无法显示该图片"/>
+
+# 4.MySQL数据文件解析
+## 4.1 InnoDB表：有2种存储方式
+### 默认方式：每表有1个独立文件和一个多表共享的文件
+- tb_name.frm：表结构定义文件，位于数据库目录中
+- ibdata：共享的表空间文件，默认位于数据目录(datadir指向的目录)中
+
+### 自定义方式：独立的表空间
+- tb_name.frm：表结构定义文件，位于数据库目录中
+- tb_name.ibd：独有的表空间文件
+	>在MySQL初始化中打开独立表空间功能的方法：
+	
+	>vi /etc/my.cnf (在[mysqld]段下添加)
+
+	>innodb_file_per_table = ON
+
+	>注：表空间：table space，是由InnoDB管理的特有格式的数据文件，内部可同时存储数据和索引
+
+## 4.2 MyISAM表：每表有3个文件，都位于数据库目录中
+- tb_name.frm：表结构定义文件
+- tb_name.MYD：数据文件
+- tb_name.MYI：索引文件
 
 
