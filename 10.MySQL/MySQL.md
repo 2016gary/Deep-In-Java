@@ -33,9 +33,36 @@
 ## 1.4.2 File System
 ### 所有的数据，数据库、表的定义，表的每一行的内容，索引，都是存在文件系统上，以文件的方式存在的。当然有些存储引擎比如InnoDB，也支持不使用文件系统直接管理裸设备，但现代文件系统的实现使得这样做没有必要了。在文件系统之下，可以使用本地磁盘，可以使用DAS、NAS、SAN等各种存储系统。
 
-# 2.MySQL内部组件结构
-
+# 2.MySQL访问路径
+### 当客户端链接上MySQL服务端时，系统为其分配一个链接描述符thd，用以描述客户端的所有信息，将作为参数在各个模块之间传递。
 <img src="./Images/MySQL_module.jpg" alt="无法显示该图片"/>
+
+# 3.MySQL高级特性
+## 3.1 存储过程
+- 变量定义顺序必须是：存储函数变量、游标定义、游标异常、程序主体
+- 定义务必加上授权： CREATE DEFINER=‘root’@‘localhost’ PROCEDURE sp();
+- 存储过程相关权限：被操作表的相关权限及EXECUTE(执行权限)，ALTER ROUTINE(修改权限)，CREATE ROUTINE(创建权限)
+- 不能使用动态游标，CURSOR中不能有动态的表名
+- 查看创建存储过程/函数的语句：SHOW CREATE PROCEDURE/FUNCTION ps;
+- 查看所有存储过程/函数：SHOW PROCEDURE/FUNCTION STATUS [LIKE ps];
+- 调用存储过程：CALL sp();
+- 调用存储函数：SELECT sp();
+
+## 3.2 触发器
+- 定义务必加上授权： CREATE DEFINER=`root`@`localhost` Trigger tgr();
+- 定义语句：CREATE DEFINER=`root`@`localhost` Trigger tgr() AFTER/BEFORE INSERT/UPDATE/DELETE ON table FOR EACH ROW;
+- 数据调用：NEW.*（更新后数据） OLD.*（更新前数据）
+- 行级触发器，每一行都会触发动作
+- 内部可以调用存储过程和函数
+- 每种类型的Trigger在一张表上只能建立一个
+
+## 3.3 分区表
+### 分区类型：
+- RANGE分区：基于属于一个给定连续区间的列值，把多行分配给分区。
+- LIST分区：类似于按RANGE分区，区别在于LIST分区是基于列值匹配一个离散值集合中的某个值来进行选择。
+- HASH分区：基于用户定义的表达式的返回值来进行选择的分区，该表达式使用将要插入到表中的这些行的列值进行计算。这个函数可以包含MySQL中有效的、产生非负整数值的任何表达式。
+- KEY分区：类似于按HASH分区，区别在于KEY分区只支持计算一列或多列，且MySQL服务器提供其自身的哈希函数。必须有一列或多列包含整数值。
+- 子分区：子分区是分区表中每个分区的再次分割。
 
 # 4.MySQL数据文件解析
 ## 4.1 InnoDB表：有2种存储方式
