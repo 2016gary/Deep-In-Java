@@ -12,6 +12,6 @@
 ### <a href="">7.MyBatis</a>
 ### <a href="">8.Hibernate</a>
 ### <a href="">9.Shiro</a>
-### <a href="">10.MySQL</a>
+### <a href="https://github.com/2016gary/Deep-In-Java/blob/master/10.MySQL/MySQL.md">10.MySQL</a>
 
 ### （未完待续）
