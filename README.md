@@ -1,7 +1,7 @@
 # Deep In Java
 
 <img src="https://i.imgur.com/x653nRK.png" width="20%" alt="无法显示该图片" />
-<img src="./公司项目开发流程.png" width="30%" alt="无法显示该图片" />
+<img src="./项目开发流程.png" width="30%" alt="无法显示该图片" />
 
 ### By Gary
 
